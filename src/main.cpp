@@ -26,15 +26,9 @@ WiFiClient client; // wifi client object
 #define ERR_WIFI 3
 #define ERR_SENSOR 6
 
-<<<<<<< HEAD
-
-// char ThingSpeakAddress[] = "api.thingspeak.com"; // Thingspeak address
-char ThingSpeakAddress[] = "34.230.146.43"; // Thingspeak address
-
-=======
 // Thingspeak IP: 34.196.7.45 / 34.230.146.43
-char ThingSpeakAddress[] = "api.thingspeak.com"; // Thingspeak address
->>>>>>> e181ea67778c664d69b6a5dccef6fe2fe00c8ef0
+// char ThingSpeakAddress[] = "api.thingspeak.com"; // Thingspeak address
+char ThingSpeakAddress[] = "34.196.7.45"; // Thingspeak address
 // const int UpdateInterval = 0.33 * 60 * 1000000;  // e.g. 0.33 * 60 * 1000000; //20-Sec update interval for development tests, to fast for practical purposes and Thingspeak!
 const int UpdateInterval = 15 * 60 * 1000000; // e.g. 15 * 60 * 1000000; for a 15-Min update interval (15-mins x 60-secs * 1000000uS)
 
@@ -150,12 +144,12 @@ int readSensor()
   temperature = bme.readTemperature();
   humidity = bme.readHumidity();
   pressure = bme.readPressure() / 100.0F + pressure_offset;
-  bmps = seaLevelPressure(ALTITUDE_TH, temperature, pres);
+  bmps = seaLevelPressure(ALTITUDE_TH, temperature, pressure);
   return 0;
 }
 
 int readSoil() {
-  double AirValue = 855.0;   // dry sensor
+  double AirValue = 860.0;   // dry sensor
   double WaterValue = 400.0; // in water
   analogReadResolution(10);
   analogSetAttenuation(ADC_11db);
@@ -189,6 +183,8 @@ void setup_weather()
     err = readSensor();
 
   soil = readSoil();
+  if (soil > 100)
+    soil = 0;
 
   if (err == 0)
   {
@@ -198,7 +194,7 @@ void setup_weather()
       "&field2=" + String(humidity) + 
       "&field3=" + String(pressure) + 
       "&field4=" + String(soil) + 
-      "&field5=" + String(bmps) + 
+      "&field5=" + String(bmps) 
       ); //Send the data as text
   }
   else

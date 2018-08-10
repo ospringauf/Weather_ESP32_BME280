@@ -34,7 +34,7 @@ const int UpdateInterval = 15 * 60 * 1000000; // e.g. 15 * 60 * 1000000; for a 1
 Adafruit_BME280 bme;
 String api_key;
 
-float temperature, humidity, pressure;
+float temperature, humidity, pressure, bmps;
 int soil;
 
 void UpdateThingSpeak(String DataForUpload)
@@ -108,6 +108,17 @@ int connectWifi(bool outdoor)
   return retry > 0 ? 0 : ERR_WIFI;
 }
 
+// temp in Celsius, altitude in meters
+float seaLevelPressure(float altitude, float temp, float pres)
+{
+    float seaPress = NAN;
+    if(!isnan(altitude) && !isnan(temp) && !isnan(pres))
+    {
+        seaPress = (pres / pow(1 - ((0.0065 *altitude) / (temp + (0.0065 *altitude) + 273.15)), 5.257));
+    }
+    return seaPress;
+}
+
 int readSensor()
 {
   // Wire.begin(19, 18); // (sda,scl)
@@ -130,12 +141,13 @@ int readSensor()
   temperature = bme.readTemperature();
   humidity = bme.readHumidity();
   pressure = bme.readPressure() / 100.0F + pressure_offset;
+  bmps = seaLevelPressure(550, temperature, pres);
   return 0;
 }
 
 int readSoil() {
-  double AirValue = 855.0;   //you need to replace this value with Value_1
-  double WaterValue = 400.0; //you need to replace this value with Value_2
+  double AirValue = 855.0;   // dry sensor
+  double WaterValue = 400.0; // in water
   analogReadResolution(10);
   analogSetAttenuation(ADC_11db);
 
@@ -176,7 +188,9 @@ void setup_weather()
       "field1=" + String(temperature) + 
       "&field2=" + String(humidity) + 
       "&field3=" + String(pressure) + 
-      "&field4=" + String(soil)); //Send the data as text
+      "&field4=" + String(soil) + 
+      "&field5=" + String(bmps) + 
+      ); //Send the data as text
   }
   else
     blink(err, 100);

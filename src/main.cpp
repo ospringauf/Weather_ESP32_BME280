@@ -21,6 +21,7 @@ WiFiClient client; // wifi client object
 #define MY_LED 23
 #define LED_OFF HIGH
 #define LED_ON LOW
+#define ALTITUDE_TH 550.0
 
 #define ERR_WIFI 3
 #define ERR_SENSOR 6
@@ -141,7 +142,7 @@ int readSensor()
   temperature = bme.readTemperature();
   humidity = bme.readHumidity();
   pressure = bme.readPressure() / 100.0F + pressure_offset;
-  bmps = seaLevelPressure(550, temperature, pres);
+  bmps = seaLevelPressure(ALTITUDE_TH, temperature, pres);
   return 0;
 }
 

@@ -1,0 +1,358 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:switches
+LIBS:weather-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title "ESP32/BME280 weather station"
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L ESP32_adapter_board U5
+U 1 1 5B54C129
+P 5700 4250
+F 0 "U5" H 6350 4750 60  0000 C CNN
+F 1 "ESP32_adapter_board" H 6750 6150 60  0000 C CNN
+F 2 "" H 5700 4250 60  0001 C CNN
+F 3 "" H 5700 4250 60  0001 C CNN
+	1    5700 4250
+	1    0    0    -1  
+$EndComp
+$Comp
+L BME280 U2
+U 1 1 5B54C33E
+P 4750 4350
+F 0 "U2" H 4850 5300 60  0000 C CNN
+F 1 "BME280" H 5000 5450 60  0000 C CNN
+F 2 "" H 4750 4350 60  0001 C CNN
+F 3 "" H 4750 4350 60  0001 C CNN
+	1    4750 4350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6050 2850 5550 2850
+Wire Wire Line
+	6050 2950 5550 2950
+Wire Wire Line
+	5550 3550 6500 3550
+Wire Wire Line
+	5550 3550 5550 3150
+Wire Wire Line
+	5600 3450 6050 3450
+Wire Wire Line
+	5600 3050 5550 3050
+$Comp
+L SW_SPDT SW1
+U 1 1 5B54C455
+P 5700 3950
+F 0 "SW1" H 5700 4120 50  0000 C CNN
+F 1 "SW_SPDT" H 5700 3750 50  0000 C CNN
+F 2 "" H 5700 3950 50  0001 C CNN
+F 3 "" H 5700 3950 50  0001 C CNN
+	1    5700 3950
+	1    0    0    -1  
+$EndComp
+$Comp
+L HT7333A U1
+U 1 1 5B54C609
+P 4100 4300
+F 0 "U1" H 4350 5150 60  0000 C CNN
+F 1 "HT7333A" H 4500 6050 60  0000 C CNN
+F 2 "" H 4100 4300 60  0001 C CNN
+F 3 "" H 4100 4300 60  0001 C CNN
+	1    4100 4300
+	0    1    1    0   
+$EndComp
+$Comp
+L TP4056_module U3
+U 1 1 5B54C8E6
+P 5150 5400
+F 0 "U3" H 5200 6550 60  0000 C CNN
+F 1 "TP4056_module" H 5700 7250 60  0000 C CNN
+F 2 "" H 5150 5400 60  0001 C CNN
+F 3 "" H 5150 5400 60  0001 C CNN
+	1    5150 5400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X02 J2
+U 1 1 5B54CB04
+P 4450 4050
+F 0 "J2" H 4450 4200 50  0000 C CNN
+F 1 "CONN_01X02" V 4550 4050 50  0000 C CNN
+F 2 "" H 4450 4050 50  0001 C CNN
+F 3 "" H 4450 4050 50  0001 C CNN
+	1    4450 4050
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X02 J1
+U 1 1 5B54CC0F
+P 3450 4050
+F 0 "J1" H 3450 4200 50  0000 C CNN
+F 1 "CONN_01X02" V 3550 4050 50  0000 C CNN
+F 2 "" H 3450 4050 50  0001 C CNN
+F 3 "" H 3450 4050 50  0001 C CNN
+	1    3450 4050
+	0    -1   -1   0   
+$EndComp
+$Comp
+L C C3
+U 1 1 5B54CD04
+P 7700 5200
+F 0 "C3" H 7725 5300 50  0000 L CNN
+F 1 "100nF" H 7725 5100 50  0000 L CNN
+F 2 "" H 7738 5050 50  0001 C CNN
+F 3 "" H 7700 5200 50  0001 C CNN
+	1    7700 5200
+	1    0    0    -1  
+$EndComp
+$Comp
+L CP C2
+U 1 1 5B54CDEF
+P 7350 5200
+F 0 "C2" H 7375 5300 50  0000 L CNN
+F 1 "1000uF" H 7375 5100 50  0000 L CNN
+F 2 "" H 7388 5050 50  0001 C CNN
+F 3 "" H 7350 5200 50  0001 C CNN
+	1    7350 5200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6050 3550 6050 4100
+Wire Wire Line
+	6050 4100 7350 4100
+$Comp
+L CP C1
+U 1 1 5B54D024
+P 4650 5000
+F 0 "C1" H 4675 5100 50  0000 L CNN
+F 1 "47uF" H 4675 4900 50  0000 L CNN
+F 2 "" H 4688 4850 50  0001 C CNN
+F 3 "" H 4650 5000 50  0001 C CNN
+	1    4650 5000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6000 3450 6000 5400
+Connection ~ 6000 5400
+Connection ~ 6000 3450
+Wire Wire Line
+	5900 3850 6050 3850
+Connection ~ 6050 3850
+Wire Wire Line
+	5900 4050 6000 4050
+Connection ~ 6000 4050
+$Comp
+L R R1
+U 1 1 5B54D31C
+P 5450 3700
+F 0 "R1" V 5530 3700 50  0000 C CNN
+F 1 "10k" V 5450 3700 50  0000 C CNN
+F 2 "" V 5380 3700 50  0001 C CNN
+F 3 "" H 5450 3700 50  0001 C CNN
+	1    5450 3700
+	-1   0    0    1   
+$EndComp
+$Comp
+L HT7333A U4
+U 1 1 5B54D561
+P 5250 4300
+F 0 "U4" H 5500 5150 60  0000 C CNN
+F 1 "HT7333A" H 5650 6050 60  0000 C CNN
+F 2 "" H 5250 4300 60  0001 C CNN
+F 3 "" H 5250 4300 60  0001 C CNN
+	1    5250 4300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5350 5000 5350 5300
+Connection ~ 5350 5300
+Wire Wire Line
+	6350 5000 6350 5400
+Connection ~ 6350 5400
+Wire Wire Line
+	6500 5000 6500 5300
+Wire Wire Line
+	7350 5350 7350 5400
+Connection ~ 7350 5400
+Wire Wire Line
+	7350 4000 7350 5050
+Connection ~ 6650 5000
+Connection ~ 7350 5000
+$Comp
+L LED D1
+U 1 1 5B54DC25
+P 7350 3850
+F 0 "D1" H 7350 3950 50  0000 C CNN
+F 1 "LED" H 7350 3750 50  0000 C CNN
+F 2 "" H 7350 3850 50  0001 C CNN
+F 3 "" H 7350 3850 50  0001 C CNN
+	1    7350 3850
+	0    1    1    0   
+$EndComp
+Connection ~ 7350 4100
+$Comp
+L R R2
+U 1 1 5B54DD68
+P 7350 3450
+F 0 "R2" V 7430 3450 50  0000 C CNN
+F 1 "4k7" V 7350 3450 50  0000 C CNN
+F 2 "" V 7280 3450 50  0001 C CNN
+F 3 "" H 7350 3450 50  0001 C CNN
+	1    7350 3450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7350 3600 7350 3700
+Wire Wire Line
+	7350 3300 7350 3150
+Wire Wire Line
+	7350 3150 6050 3150
+$Comp
+L CONN_01X04 J3
+U 1 1 5B54DEE2
+P 6650 1900
+F 0 "J3" H 6650 2150 50  0000 C CNN
+F 1 "CONN_01X04" V 6750 1900 50  0000 C CNN
+F 2 "" H 6650 1900 50  0001 C CNN
+F 3 "" H 6650 1900 50  0001 C CNN
+	1    6650 1900
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5600 3050 5600 3450
+Wire Wire Line
+	6500 3550 6500 2100
+Connection ~ 6050 3550
+Wire Wire Line
+	6800 2100 6800 3450
+Wire Wire Line
+	6800 3450 6000 3450
+Wire Wire Line
+	6600 2100 6600 3350
+Wire Wire Line
+	6600 3350 6050 3350
+Wire Wire Line
+	6700 2100 6700 3250
+Wire Wire Line
+	6700 3250 6050 3250
+Wire Wire Line
+	5450 3550 5450 2750
+Wire Wire Line
+	5450 2750 6050 2750
+Wire Wire Line
+	5450 3850 5450 3950
+Wire Wire Line
+	5450 3950 5500 3950
+Wire Wire Line
+	3500 4250 3500 4300
+Wire Wire Line
+	3400 4250 3200 4250
+Wire Wire Line
+	3200 4250 3200 5400
+Wire Wire Line
+	3200 5400 3500 5400
+Wire Wire Line
+	4400 4250 4400 4700
+Wire Wire Line
+	4400 4700 4250 4700
+Wire Wire Line
+	4500 4250 4500 5000
+Wire Wire Line
+	4500 5000 4250 5000
+Wire Wire Line
+	4250 4600 4850 4600
+$Comp
+L Battery_Cell BT1
+U 1 1 5B54E993
+P 4450 3700
+F 0 "BT1" H 4550 3800 50  0000 L CNN
+F 1 "18500 LiPo battery" H 4550 3700 50  0000 L CNN
+F 2 "" V 4450 3760 50  0001 C CNN
+F 3 "" V 4450 3760 50  0001 C CNN
+	1    4450 3700
+	1    0    0    -1  
+$EndComp
+Text Label 7350 4550 0    60   ~ 0
+VDD3.3
+$Comp
+L Solar_Cells SC1
+U 1 1 5B54EA84
+P 3450 3650
+F 0 "SC1" H 3550 3750 50  0000 L CNN
+F 1 "6v/1W Solar Panel" H 3550 3650 50  0000 L CNN
+F 2 "" V 3450 3710 50  0001 C CNN
+F 3 "" V 3450 3710 50  0001 C CNN
+	1    3450 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 5100 4500 5100
+Wire Wire Line
+	4500 5100 4500 5400
+Wire Wire Line
+	4650 4850 4650 4600
+Connection ~ 4650 4600
+Wire Wire Line
+	4850 4600 4850 5300
+Wire Wire Line
+	4850 5300 6500 5300
+Wire Wire Line
+	4650 5150 4650 5400
+Connection ~ 4650 5400
+Wire Wire Line
+	5200 5000 5200 5400
+Connection ~ 5200 5400
+Wire Wire Line
+	7700 5050 7700 5000
+Wire Wire Line
+	7700 5000 5500 5000
+Wire Wire Line
+	7700 5350 7700 5400
+Wire Wire Line
+	7700 5400 4500 5400
+Text Notes 3200 6050 0    60   ~ 0
+TP4056 & DW-01\nLiPo charging & protection \nmodule
+Text Notes 5200 6050 0    60   ~ 0
+dual HT7333 \nLDO voltage regulator\n(max 2 x 250mA)
+Text Notes 6150 1650 0    60   ~ 0
+programming interface\n(connect TTL serial to USB adapter)
+$EndSCHEMATC

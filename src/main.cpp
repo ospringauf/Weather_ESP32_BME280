@@ -17,8 +17,15 @@
 
 WiFiClient client; // wifi client object
 
-#define MY_BME280_ADR 0x76
+
+// pins
 #define MY_LED 23
+#define SOIL_SENSOR_PWR 22
+#define SOIL_SENSOR_INPUT 35
+#define MY_SDA 18
+#define MY_SCL 21
+
+#define MY_BME280_ADR 0x76
 #define LED_OFF HIGH
 #define LED_ON LOW
 #define ALTITUDE_TH 550.0
@@ -27,8 +34,8 @@ WiFiClient client; // wifi client object
 #define ERR_SENSOR 6
 
 // Thingspeak IP: 34.196.7.45 / 34.230.146.43
-// char ThingSpeakAddress[] = "api.thingspeak.com"; // Thingspeak address
-char ThingSpeakAddress[] = "34.196.7.45"; // Thingspeak address
+char ThingSpeakAddress[] = "api.thingspeak.com"; // Thingspeak address
+// char ThingSpeakAddress[] = "34.196.7.45"; // Thingspeak address
 // const int UpdateInterval = 0.33 * 60 * 1000000;  // e.g. 0.33 * 60 * 1000000; //20-Sec update interval for development tests, to fast for practical purposes and Thingspeak!
 const int UpdateInterval = 15 * 60 * 1000000; // e.g. 15 * 60 * 1000000; for a 15-Min update interval (15-mins x 60-secs * 1000000uS)
 
@@ -124,8 +131,7 @@ float seaLevelPressure(float altitude, float temp, float pres)
 
 int readSensor()
 {
-  // Wire.begin(19, 18); // (sda,scl)
-  Wire.begin(18, 21); // (sda,scl)
+  Wire.begin(MY_SDA, MY_SCL); // (sda,scl)
 
   if (!bme.begin(MY_BME280_ADR))
   {
@@ -149,15 +155,19 @@ int readSensor()
 }
 
 int readSoil() {
+  pinMode(SOIL_SENSOR_PWR, OUTPUT);
+  digitalWrite(SOIL_SENSOR_PWR, HIGH);
+  delay(200);
   double AirValue = 860.0;   // dry sensor
   double WaterValue = 400.0; // in water
   analogReadResolution(10);
   analogSetAttenuation(ADC_11db);
 
-  uint16_t soilMoistureValue = analogRead(35); //put Sensor insert into soil
+  uint16_t soilMoistureValue = analogRead(SOIL_SENSOR_INPUT); //put Sensor insert into soil
   // Serial.print(soilMoistureValue);
   // Serial.print("  ");
   
+  digitalWrite(SOIL_SENSOR_PWR, LOW); // turn sensor off
   return (int)(100 * (1 - (soilMoistureValue - WaterValue)/(AirValue - WaterValue)));
 }
 
@@ -222,5 +232,5 @@ void loop()
   //Do nothing as it will never get here!
 
   // Serial.println(readSoil());
-  // delay(500);
+  // delay(1000);
 }

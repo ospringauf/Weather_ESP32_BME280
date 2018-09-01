@@ -1,4 +1,4 @@
-update=So 22 Jul 2018 19:39:06 CEST
+update=Sa 01 Sep 2018 19:41:18 CEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -61,3 +61,4 @@ LibName29=valves
 LibName30=esp-deck-cache
 LibName31=mylib
 LibName32=switches
+LibName33=/home/oliver/projekte/rover/git/mecanumrover/schematics/mylib

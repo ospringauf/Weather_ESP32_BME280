@@ -28,9 +28,8 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:esp-deck-cache
-LIBS:mylib
 LIBS:switches
+LIBS:weather-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -351,9 +350,9 @@ Wire Wire Line
 Wire Wire Line
 	7700 5400 4500 5400
 Text Notes 3200 6050 0    60   ~ 0
-TP4056\nLiPo charging & protection \nmodule
+TP4056 & DW-01\nLiPo charging & protection \nmodule
 Text Notes 5200 6050 0    60   ~ 0
 dual HT7333 \nLDO voltage regulator\n(max 2 x 250mA)
 Text Notes 6150 1650 0    60   ~ 0
-programming interface
+programming interface\n(connect TTL serial to USB adapter)
 $EndSCHEMATC

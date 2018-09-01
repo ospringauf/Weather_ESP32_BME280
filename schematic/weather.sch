@@ -29,6 +29,7 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:switches
+LIBS:mylib
 LIBS:weather-cache
 EELAYER 25 0
 EELAYER END
@@ -355,4 +356,28 @@ Text Notes 5200 6050 0    60   ~ 0
 dual HT7333 \nLDO voltage regulator\n(max 2 x 250mA)
 Text Notes 6150 1650 0    60   ~ 0
 programming interface\n(connect TTL serial to USB adapter)
+$Comp
+L cap_moist U?
+U 1 1 5B8AD40B
+P 7450 3250
+F 0 "U?" H 7950 3500 60  0000 C CNN
+F 1 "cap_moist" H 8100 4050 60  0000 C CNN
+F 2 "" H 7450 3250 60  0001 C CNN
+F 3 "" H 7450 3250 60  0001 C CNN
+	1    7450 3250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7300 2750 7700 2750
+Wire Wire Line
+	7700 2850 7300 2850
+Connection ~ 6000 4200
+Wire Wire Line
+	7700 2650 7600 2650
+Wire Wire Line
+	7600 2650 7600 4200
+Wire Wire Line
+	7600 4200 6000 4200
+Text Notes 7850 2350 0    60   ~ 0
+capacitive soil\nmoisture sensor
 $EndSCHEMATC

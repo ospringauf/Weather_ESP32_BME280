@@ -33,9 +33,8 @@ WiFiClient client; // wifi client object
 #define ERR_WIFI 3
 #define ERR_SENSOR 6
 
-// Thingspeak IP: 34.196.7.45 / 34.230.146.43
 char ThingSpeakAddress[] = "api.thingspeak.com"; // Thingspeak address
-// char ThingSpeakAddress[] = "34.196.7.45"; // Thingspeak address
+// char ThingSpeakAddress[] = "54.210.227.170"; // Thingspeak address
 // const int UpdateInterval = 0.33 * 60 * 1000000;  // e.g. 0.33 * 60 * 1000000; //20-Sec update interval for development tests, to fast for practical purposes and Thingspeak!
 const int UpdateInterval = 15 * 60 * 1000000; // e.g. 15 * 60 * 1000000; for a 15-Min update interval (15-mins x 60-secs * 1000000uS)
 
@@ -58,8 +57,10 @@ void UpdateThingSpeak(String DataForUpload)
   {
     Serial.println(DataForUpload);
     client.print("POST /update HTTP/1.1\n");
-    client.print("Host: api.thingspeak.com\n");
-    // client.print("Host: 34.230.146.43\n");
+    // client.print("Host: api.thingspeak.com\n");
+    client.print("Host: ");
+    client.print(ThingSpeakAddress);
+    client.print("\n");
     client.print("Connection: close\n");
     client.print("X-THINGSPEAKAPIKEY: " + api_key + "\n");
     client.print("Content-Type: application/x-www-form-urlencoded\n");

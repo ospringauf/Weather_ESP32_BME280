@@ -14,6 +14,9 @@
 #include "soc/rtc_cntl_reg.h"
 
 #include "credentials.h"
+#include "ThingSpeak.h" // always include thingspeak header file after other header files and custom macros
+
+
 
 WiFiClient client; // wifi client object
 
@@ -33,44 +36,38 @@ WiFiClient client; // wifi client object
 #define ERR_WIFI 3
 #define ERR_SENSOR 6
 
-char ThingSpeakAddress[] = "api.thingspeak.com"; // Thingspeak address
-// char ThingSpeakAddress[] = "54.210.227.170"; // Thingspeak address
 // const int UpdateInterval = 0.33 * 60 * 1000000;  // e.g. 0.33 * 60 * 1000000; //20-Sec update interval for development tests, to fast for practical purposes and Thingspeak!
 const int UpdateInterval = 15 * 60 * 1000000; // e.g. 15 * 60 * 1000000; for a 15-Min update interval (15-mins x 60-secs * 1000000uS)
 
 #define pressure_offset 0.0 // no compensation
 Adafruit_BME280 bme;
-String api_key;
+const char* api_key;
+int channel;
 
 float temperature, humidity, pressure, bmps;
 int soil;
 
-void UpdateThingSpeak(String DataForUpload)
-{
-  WiFiClient client;
-  if (!client.connect(ThingSpeakAddress, 80))
-  {
-    Serial.println("connection to Thingspeak failed");
-    return;
+
+void UpdateThingSpeak(float temperature, float humidity, float pressure, int soil, float bmps) {
+  ThingSpeak.begin(client);  // Initialize ThingSpeak
+
+  // set the fields with the values
+  ThingSpeak.setField(1, temperature);
+  ThingSpeak.setField(2, humidity);
+  ThingSpeak.setField(3, pressure);
+  ThingSpeak.setField(4, soil);
+  ThingSpeak.setField(5, bmps);
+
+  ThingSpeak.setStatus("ok");
+
+  // write to the ThingSpeak channel
+  int x = ThingSpeak.writeFields(channel, api_key);
+  if(x == 200){
+    Serial.println("Channel update successful.");
   }
-  else
-  {
-    Serial.println(DataForUpload);
-    client.print("POST /update HTTP/1.1\n");
-    // client.print("Host: api.thingspeak.com\n");
-    client.print("Host: ");
-    client.print(ThingSpeakAddress);
-    client.print("\n");
-    client.print("Connection: close\n");
-    client.print("X-THINGSPEAKAPIKEY: " + api_key + "\n");
-    client.print("Content-Type: application/x-www-form-urlencoded\n");
-    client.print("Content-Length: ");
-    client.print(DataForUpload.length());
-    client.print("\n\n");
-    client.print(DataForUpload);
-    delay(200);
+  else{
+    Serial.println("Problem updating channel. HTTP error code " + String(x));
   }
-  client.stop();
 }
 
 void blink(int n, uint32_t d = 250)
@@ -95,11 +92,13 @@ int connectWifi(bool outdoor)
   {
     WiFi.begin(ssid2, password2);
     api_key = api_key2;
+    channel = channel2;
   }
   else
   {
     WiFi.begin(ssid1, password1);
     api_key = api_key1;
+    channel = channel1;
   }
 
   int retry = 20;
@@ -133,6 +132,7 @@ float seaLevelPressure(float altitude, float temp, float pres)
 int readSensor()
 {
   Wire.begin(MY_SDA, MY_SCL); // (sda,scl)
+  delay(100);
 
   if (!bme.begin(MY_BME280_ADR))
   {
@@ -200,13 +200,15 @@ void setup_weather()
   if (err == 0)
   {
     blink(2, 100);
-    UpdateThingSpeak(
-      "field1=" + String(temperature) + 
-      "&field2=" + String(humidity) + 
-      "&field3=" + String(pressure) + 
-      "&field4=" + String(soil) + 
-      "&field5=" + String(bmps) 
-      ); //Send the data as text
+
+    String data = "t=" + String(temperature) + 
+      " hum=" + String(humidity) + 
+      " pres=" + String(pressure) + 
+      " soil=" + String(soil) + 
+      " bmps=" + String(bmps);
+    Serial.println(data);
+
+    UpdateThingSpeak(temperature, humidity, pressure, soil, bmps);
   }
   else
     blink(err, 100);

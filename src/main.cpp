@@ -1,17 +1,17 @@
 /* 
- * ESP32 and a BME280 sensor that updates a Thingspeak channel, then goes to Deep Sleep
+ * ESP8266 and AHT10 sensor that updates a Thingspeak channel, then goes to Deep Sleep
  * Also please refer to Adafruit for their Licences
+ * 
+ * wiring AHT10: SCL=D1 SDA=D2
+ * conect D0 to RST (wakeup)
 */
 
 // from https://github.com/G6EJD/ESP32-8266-Thingspeak-Deep-Sleep-Examples/blob/master/ESP32_Thingspeak_Deep_Sleep_BME280.ino
 
-#include <WiFi.h>
+#include <ESP8266WiFi.h>
 #include <Wire.h>
 #include <Adafruit_BME280.h>
-#include "esp_deep_sleep.h" //Library needed for ESP32 Sleep Functions
-
-#include "soc/soc.h"
-#include "soc/rtc_cntl_reg.h"
+#include <Adafruit_AHTX0.h>
 
 #include "credentials.h"
 #include "ThingSpeak.h" // always include thingspeak header file after other header files and custom macros
@@ -19,10 +19,10 @@
 
 
 WiFiClient client; // wifi client object
-
+Adafruit_AHTX0 aht;
 
 // pins
-#define MY_LED 23
+#define MY_LED LED_BUILTIN
 #define SOIL_SENSOR_PWR 22
 #define SOIL_SENSOR_INPUT 35
 #define MY_SDA 18
@@ -54,9 +54,9 @@ void UpdateThingSpeak(float temperature, float humidity, float pressure, int soi
   // set the fields with the values
   ThingSpeak.setField(1, temperature);
   ThingSpeak.setField(2, humidity);
-  ThingSpeak.setField(3, pressure);
-  ThingSpeak.setField(4, soil);
-  ThingSpeak.setField(5, bmps);
+  // ThingSpeak.setField(3, pressure);
+  // ThingSpeak.setField(4, soil);
+  // ThingSpeak.setField(5, bmps);
 
   ThingSpeak.setStatus("ok");
 
@@ -129,72 +129,52 @@ float seaLevelPressure(float altitude, float temp, float pres)
     return seaPress;
 }
 
-int readSensor()
+int readAHT10Sensor()
 {
-  Wire.begin(MY_SDA, MY_SCL); // (sda,scl)
-  delay(100);
+  if (aht.begin()) {
+    Serial.println("Found AHT20");
+  } else {
+    Serial.println("Didn't find AHT20");
+  }  
 
-  if (!bme.begin(MY_BME280_ADR))
-  {
-    Serial.println("Could not find a sensor, check wiring!");
-    return ERR_SENSOR;
-  }
-  else
-  {
-    Serial.println("Found a sensor, continuing");
-    while (isnan(bme.readPressure()))
-    {
-      Serial.println(bme.readPressure());
-    }
-  }
+  sensors_event_t sehum, setemp;
+  
+  aht.getEvent(&sehum, &setemp);// populate temp and humidity objects with fresh data
 
-  temperature = bme.readTemperature();
-  humidity = bme.readHumidity();
-  pressure = bme.readPressure() / 100.0F + pressure_offset;
-  bmps = seaLevelPressure(ALTITUDE_TH, temperature, pressure);
+  temperature = setemp.temperature;
+  humidity = sehum.relative_humidity;
+  pressure = 0;
+  bmps = 0;
+
+  Serial.print("reading complete");
+
   return 0;
 }
 
-int readSoil() {
-  pinMode(SOIL_SENSOR_PWR, OUTPUT);
-  digitalWrite(SOIL_SENSOR_PWR, HIGH);
-  delay(200);
-  double AirValue = 860.0;   // dry sensor
-  double WaterValue = 400.0; // in water
-  analogReadResolution(10);
-  analogSetAttenuation(ADC_11db);
-
-  uint16_t soilMoistureValue = analogRead(SOIL_SENSOR_INPUT); //put Sensor insert into soil
-  // Serial.print(soilMoistureValue);
-  // Serial.print("  ");
-  
-  digitalWrite(SOIL_SENSOR_PWR, LOW); // turn sensor off
-  return (int)(100 * (1 - (soilMoistureValue - WaterValue)/(AirValue - WaterValue)));
-}
 
 void setup_weather()
 {
   // voltage is critical for a short period during startup
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
+  // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
 
   pinMode(MY_LED, OUTPUT);
   digitalWrite(MY_LED, LED_OFF);
   pinMode(4, INPUT);
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("Starting");
   delay(200);
 
-  bool outdoor = digitalRead(4) == 0;
+  bool outdoor = 1; //digitalRead(4) == 0;
   int err = connectWifi(outdoor);
 
   delay(500);
 
   if (err == 0)
-    err = readSensor();
+    err = readAHT10Sensor();
 
-  soil = readSoil();
-  if (soil > 100)
+  // soil = readSoil();
+  // if (soil > 100)
     soil = 0;
 
   if (err == 0)
@@ -214,10 +194,11 @@ void setup_weather()
     blink(err, 100);
 
   // back to sleep
-  esp_deep_sleep_enable_timer_wakeup(UpdateInterval);
   Serial.println("Going to sleep now...");
   delay(200);
-  esp_deep_sleep_start();
+  ESP.deepSleep(UpdateInterval, WAKE_RF_DEFAULT); // Sleep for the time set by 'UpdateInterval'
+  // ESP.deepSleep(5 * 1000000);
+  yield();
 }
 
 void setup()

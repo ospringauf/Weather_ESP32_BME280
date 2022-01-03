@@ -132,7 +132,7 @@ float seaLevelPressure(float altitude, float temp, float pres)
 int readSensor()
 {
   Wire.begin(MY_SDA, MY_SCL); // (sda,scl)
-  delay(100);
+  delay(500);
 
   if (!bme.begin(MY_BME280_ADR))
   {

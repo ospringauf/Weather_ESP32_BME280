@@ -5,8 +5,7 @@
 
 // from https://github.com/G6EJD/ESP32-8266-Thingspeak-Deep-Sleep-Examples/blob/master/ESP32_Thingspeak_Deep_Sleep_BME280.ino
 
-// TODO upload measurements in order (ascending timestamp)?
-// TODO
+// TODO bulk upload to Thingspeak?
 
 #include <WiFi.h>
 #include <Wire.h>

@@ -45,12 +45,11 @@ WiFiClient client; // wifi client object
 Adafruit_BME280 bme;
 
 //const int UpdateInterval = 15 * 60 * 1000000; // e.g. 15 * 60 * 1000000; for a 15-Min update interval (15-mins x 60-secs * 1000000uS)
-const int UpdateInterval = 60 * 1000000;
+const ulong UpdateInterval = 30 * 60 * 1000000;
 const char *api_key;
 const char *my_time_zone = TZ_Europe_Berlin;
 int channel;
 
-//float temperature, humidity, pressure, bmps;
 int soil;
 
 typedef struct
@@ -63,9 +62,9 @@ typedef struct
 
 sensorReadings current;
 
-// RTC memory (max 8k)
-RTC_DATA_ATTR int storeCount = 0;
-RTC_DATA_ATTR int readPtr = 0;
+// RTC memory (max 8k), cyclic buffer (fifo)
+RTC_DATA_ATTR int storeCount = 0; // number of stored readings
+RTC_DATA_ATTR int readPtr = 0; // next reading to upload
 RTC_DATA_ATTR sensorReadings storedReadings[STORAGE];
 RTC_DATA_ATTR int resyncTime = 0; // NTP update, remaining cycles
 
@@ -345,11 +344,11 @@ void setupWeather()
     blink(err, 100);
 
   // back to sleep
-  int ui = UpdateInterval;
-  if (storeCount > 50)
-    ui = 2 * UpdateInterval;
+  ulong ui = UpdateInterval;
+  if (storeCount > 25)
+    ui = 2L * UpdateInterval;
   if (storeCount > 100)
-    ui = 4 * UpdateInterval;
+    ui = 5L * UpdateInterval;
 
   esp_deep_sleep_enable_timer_wakeup(ui);
   Serial.println("--- GOING TO SLEEP NOW");
